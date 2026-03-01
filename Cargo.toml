@@ -2,5 +2,9 @@
 name = "lite-llm"
 version = "0.1.0"
 edition = "2021"
+description = "Standalone Lite LLM integration skeleton crate."
+license-file = "LICENSE"
+readme = "README.md"
+rust-version = "1.70"
 
 [dependencies]
