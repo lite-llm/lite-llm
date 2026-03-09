@@ -9,6 +9,10 @@ repository = "https://github.com/lite-llm/lite-llm"
 authors = ["Lite LLM Developers <litellm@dust.llc>"]
 rust-version = "1.70"
 
+[[bin]]
+name = "lite-llm"
+path = "src/main.rs"
+
 [dependencies]
 lite-llm-runtime = { version = "0.1.0", path = "../lite-llm-runtime" }
 lite-llm-distributed = { version = "0.1.0", path = "../lite-llm-distributed" }
@@ -16,3 +20,4 @@ lite-llm-storage = { version = "0.1.0", path = "../lite-llm-storage" }
 lite-llm-training = { version = "0.1.0", path = "../lite-llm-training" }
 lite-llm-inference = { version = "0.1.0", path = "../lite-llm-inference" }
 lite-llm-security = { version = "0.1.0", path = "../lite-llm-security" }
+clap = { version = "4.0", features = ["derive"] }
