@@ -1,49 +1,54 @@
 # lite-llm
 
-Orchestrated integration crate for Lite LLM.
+A lightweight language model implementation in Rust.
 
-## Purpose
-`lite-llm` wires the independently versioned crates into one startup and operations API:
+## Features
 
-- runtime
-- distributed
-- storage
-- training
-- inference
-- security
+- Character-level tokenizer (~90 vocab)
+- Transformer-based language model
+- Multiple sampling strategies (greedy, temperature, top-k, top-p)
+- Training utilities
+- Model checkpoint save/load
+- CLI interface
 
-## Key Capabilities
-- Bootstrap orchestration via `LiteLlm::bootstrap(...)`.
-- Shared contract compatibility checks across crates.
-- Startup profiles (`Development`, `Deterministic`, `Throughput`, `Recovery`).
-- Mode-specific entrypoints:
-  - `start_training(...)`
-  - `start_inference(...)`
-  - `start_replay(...)`
-  - `start_recovery(...)`
-- SPEC-compliance release gate for `SPEC-001`..`SPEC-060`.
+## Building
 
-## Public Modules
-- `src/orchestrator.rs`: integration state and mode entrypoints
-- `src/mode.rs`: bootstrap/mode config and handle types
-- `src/contracts.rs`: shared contract drift checks
-- `src/types.rs`: canonical cross-crate type conversions
-- `src/spec_gate.rs`: release gate matrix and required compliance tests
-- `src/profile.rs`: startup tuning profiles
-- `src/error.rs`: unified error surface
-
-## Build and Test
 ```bash
-cargo fmt
-cargo test
+cargo build --release
 ```
 
-## Documentation
-- Comprehensive docs: `../lite-llm-docs/README.md`
-- Compliance gate details: `../lite-llm-docs/operations/release-gate.md`
+## Usage
 
-## Changelog
-See `CHANGELOG.md`.
+### Generate Text
+
+```bash
+# Basic generation
+cargo run -- generate --prompt "Hello world"
+
+# With custom parameters
+cargo run -- generate --prompt "Hello" --max-length 100 --temperature 0.7 --top-k 40 --top-p 0.9
+
+# With seed for reproducibility
+cargo run -- generate --prompt "Hello" --seed 42
+```
+
+### Train Model
+
+```bash
+cargo run -- train --epochs 10 --batch-size 4 --learning-rate 0.01
+```
+
+### Show Info
+
+```bash
+cargo run -- info
+```
+
+## Architecture
+
+- **Tokenizer**: Character-level with ~90 vocab size
+- **Model**: Transformer with embedding, multi-head attention, feed-forward networks
+- **Sampling**: Supports greedy, temperature, top-k, and top-p sampling
 
 ## License
-See `LICENSE`.
+MIT
