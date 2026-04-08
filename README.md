@@ -51,4 +51,4 @@ cargo run -- info
 - **Sampling**: Supports greedy, temperature, top-k, and top-p sampling
 
 ## License
-MIT
+DOSL-IIE-1.0
