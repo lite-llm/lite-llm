@@ -6,7 +6,7 @@ use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[cfg(test)]
-use lite_llm_distributed::CollectiveOps;
+use lite_llm_distributed::{DeterministicCollectives, DeterministicCollectivesOp};
 #[cfg(test)]
 use lite_llm_inference::InferencePipeline;
 #[cfg(test)]
@@ -874,18 +874,14 @@ mod tests {
         };
 
         manifest.manifest_hash_hex = manifest.recompute_hash();
-        let pub_material = "publisher-public-material";
-        manifest.signature.signature_hex = lite_llm_security::SignatureVerifier::sign_for_testing(
-            pub_material,
-            &manifest.signature.signer_id,
-            &manifest.manifest_hash_hex,
-        );
+        let keypair = lite_llm_security::Ed25519KeyPair::generate("pub-1");
+        manifest.sign_with(&keypair, "publisher");
 
         let mut signature_verifier = lite_llm_security::SignatureVerifier::default();
-        signature_verifier.register_key("pub-1", pub_material);
+        signature_verifier.register_key("pub-1", keypair.verifying_key);
 
         let loader = lite_llm_security::SecureModelLoader {
-            verifier: lite_llm_security::DeterministicDigestVerifier,
+            verifier: lite_llm_security::CryptographicDigestVerifier,
             signature_verifier,
             supported_major_version: 1,
             expected_tiers: BTreeSet::from([1, 2]),
