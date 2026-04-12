@@ -2,7 +2,9 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use lite_llm_security::AuditSink;
+use lite_llm_storage::cloud_backend::StorageBackendConfig;
 
+use crate::async_training::{AsyncInferenceHandle, AsyncTrainingHandle, ClusterOrchestrator};
 use crate::contracts::{verify_shared_contracts, ContractReport};
 use crate::error::{LiteLlmError, LiteLlmResult};
 use crate::mode::{
@@ -340,6 +342,29 @@ impl LiteLlm {
             runtime_status,
             restored_snapshot,
         })
+    }
+
+    // -- async helpers -------------------------------------------------------
+
+    /// Wrap a [`TrainingHandle`] in an async-capable wrapper with cloud storage.
+    pub async fn into_async_training(
+        &self,
+        handle: TrainingHandle,
+        storage_config: StorageBackendConfig,
+        checkpoint_dir: String,
+        use_amp: bool,
+    ) -> LiteLlmResult<AsyncTrainingHandle> {
+        AsyncTrainingHandle::new(handle, storage_config, checkpoint_dir, use_amp).await
+    }
+
+    /// Wrap an [`InferenceHandle`] in an async-capable wrapper.
+    pub fn into_async_inference(&self, handle: InferenceHandle) -> AsyncInferenceHandle {
+        AsyncInferenceHandle::new(handle)
+    }
+
+    /// Create a new [`ClusterOrchestrator`] for distributed training/inference.
+    pub fn cluster_orchestrator(&self) -> ClusterOrchestrator {
+        ClusterOrchestrator::new(self.distributed.parallelism.world_size())
     }
 }
 

@@ -1,3 +1,4 @@
+pub mod async_training;
 pub mod contracts;
 pub mod error;
 pub mod mode;
@@ -6,6 +7,10 @@ pub mod profile;
 pub mod spec_gate;
 pub mod types;
 
+pub use async_training::{
+    AsyncInferenceHandle, AsyncTrainingHandle, ClusterOrchestrator, DistributedInferenceConfig,
+    DistributedTrainingConfig, WorkerConfig,
+};
 pub use contracts::{verify_shared_contracts, ContractReport};
 pub use error::{LiteLlmError, LiteLlmResult};
 pub use mode::{
