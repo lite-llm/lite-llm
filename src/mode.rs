@@ -17,6 +17,63 @@ pub struct BootstrapConfig {
     pub signing_secret: String,
 }
 
+impl BootstrapConfig {
+    pub fn validate(&self) -> Result<(), ConfigValidationError> {
+        if self.node_id.is_empty() {
+            return Err(ConfigValidationError::InvalidNodeId(
+                "node_id cannot be empty".into(),
+            ));
+        }
+        if self.signer_id.is_empty() {
+            return Err(ConfigValidationError::InvalidSignerId(
+                "signer_id cannot be empty".into(),
+            ));
+        }
+        if self.signing_secret.len() < 8 {
+            return Err(ConfigValidationError::InvalidSigningSecret(
+                "signing_secret must be at least 8 characters".into(),
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn from_env() -> Self {
+        Self {
+            profile: StartupProfile::default(),
+            runtime: lite_llm_runtime::RuntimeOptions::default(),
+            manifest_text: String::new(),
+            initial_active_tiers: None,
+            distributed: lite_llm_distributed::ParallelismConfig::default(),
+            snapshot_root: PathBuf::from("."),
+            training_checkpoint_root: PathBuf::from("."),
+            node_id: std::env::var("LITE_LLM_NODE_ID").unwrap_or_else(|_| "default-node".into()),
+            signer_id: std::env::var("LITE_LLM_SIGNER_ID")
+                .unwrap_or_else(|_| "default-signer".into()),
+            signing_secret: std::env::var("LITE_LLM_SIGNING_SECRET")
+                .unwrap_or_else(|_| "default-secret-123".into()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ConfigValidationError {
+    InvalidNodeId(String),
+    InvalidSignerId(String),
+    InvalidSigningSecret(String),
+}
+
+impl std::fmt::Display for ConfigValidationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidNodeId(msg) => write!(f, "Invalid node_id: {}", msg),
+            Self::InvalidSignerId(msg) => write!(f, "Invalid signer_id: {}", msg),
+            Self::InvalidSigningSecret(msg) => write!(f, "Invalid signing_secret: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for ConfigValidationError {}
+
 #[derive(Debug, Clone)]
 pub struct TrainingEntrypoint {
     pub model_identifier: lite_llm_training::ModelIdentifier,

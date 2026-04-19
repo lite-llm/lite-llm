@@ -6,7 +6,7 @@ use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[cfg(test)]
-use lite_llm_distributed::{DeterministicCollectives, DeterministicCollectivesOp};
+use lite_llm_distributed::DeterministicCollectivesOp;
 #[cfg(test)]
 use lite_llm_inference::InferencePipeline;
 #[cfg(test)]

@@ -1,5 +1,6 @@
 pub mod async_training;
 pub mod contracts;
+pub mod env;
 pub mod error;
 pub mod mode;
 pub mod orchestrator;
